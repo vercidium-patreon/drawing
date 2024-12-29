@@ -26,8 +26,8 @@ public unsafe partial class Client
             // Precalculate input stuff
             inputContext = window.CreateInput();
             keyboard = inputContext.Keyboards[0];
-            mouse = inputContext.Mice[0];
-            mouse.DoubleClickTime = 1;
+            keyboard.KeyDown += OnKeyDown;
+            keyboard.KeyUp += OnKeyUp;
         };
 
         window.Render += (_) => Render();
@@ -37,14 +37,12 @@ public unsafe partial class Client
         window.UpdatesPerSecond = 144;
         window.VSync = false;
 
-        // Initialise OpenGL and input context
+        // Initialise OpenGL and the input context
         window.Initialize();
     }
 
-
     // Silk
     IWindow window;
-    IMouse mouse;
     IKeyboard keyboard;
     IInputContext inputContext;
 
@@ -64,6 +62,24 @@ public unsafe partial class Client
 
         var version = major * 10 + minor;
         Console.WriteLine($"OpenGL Version: {version}");
+    }
+
+    public void OnKeyDown(IKeyboard keyboard, Key key, int something)
+    {
+        OnKeyEvent(new KeyEvent()
+        {
+            IsPress = true,
+            KeyCode = key,
+        });
+    }
+
+    public void OnKeyUp(IKeyboard keyboard, Key key, int something)
+    {
+        OnKeyEvent(new KeyEvent()
+        {
+            IsPress = false,
+            KeyCode = key,
+        });
     }
 
     void Render()

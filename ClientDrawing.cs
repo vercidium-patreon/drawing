@@ -1,10 +1,28 @@
-﻿using SkiaSharp;
+﻿using Silk.NET.Input;
+using SkiaSharp;
 
 namespace drawing;
 
 public unsafe partial class Client
 {
-    public void Draw()
+    SKRect rectangle = new(100, 100, 400, 400);
+
+    void OnKeyEvent(KeyEvent key)
+    {
+        // Move the rectangle 10px to the right when pressing the right key
+        if (key.IsPress && key.KeyCode == Key.Right)
+        {
+            var offset = 10;
+
+            // Move faster if shift is held
+            if (keyboard.IsKeyPressed(Key.ShiftLeft))
+                offset *= 5;
+
+            rectangle.Offset(offset, 0);
+        }
+    }
+
+    void Draw()
     {
         // Colours
         var red = new SKColor(255, 0, 0);
@@ -17,7 +35,7 @@ public unsafe partial class Client
 
 
         // Blue rectangle
-        bitmap.FillRectangle(new SKRect(100, 100, 400, 400), blue);
+        bitmap.FillRectangle(rectangle, blue);
 
 
         // Red sin wave
